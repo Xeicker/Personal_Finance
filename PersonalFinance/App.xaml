@@ -1,0 +1,37 @@
+﻿<Application x:Class="PersonalFinance.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PersonalFinance"
+             xmlns:c="clr-namespace:PersonalFinance.Itemtemplates"
+             xmlns:c2="clr-namespace:PersonalFinance.DataConverters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary x:Name="RDict">
+            <Style x:Key="DataGridRightAligned" TargetType="DataGridCell">
+                <Setter Property="FrameworkElement.HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="TextBlock.HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+                <Setter Property="Margin" Value="20,2,0,2"/>
+            </Style>
+            <Style x:Key="tabSelector" TargetType="TabItem">
+                <Setter Property="Height" Value="30"/>
+            </Style>
+            <Style x:Key="CenterDatagridHeaders" TargetType="DataGridColumnHeader">
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            </Style>
+            <c:CValueCollection x:Key="CValues"/>
+            <c:DateCollection x:Key="Dates"/>
+            <c:IncomeCollection x:Key="Incomes"/>
+            <c:Date x:Key="SelectedDate"/>
+            <c:Investment x:Key="MainInvestment"/>
+            <c:InterestCollection x:Key="Interests"/>
+            <c:CreditCardCollection x:Key="CreditCards"/>
+            <c:CreditCardMoveCollection x:Key="CCMoves"/>
+            <c:CreditCardRewardCollection x:Key="Rewards"/>
+            <c:RevenueCollection x:Key="Revenues"/>
+            <c:CreditCardSavingsCollection x:Key="Savings"/>
+            <c2:BooleanNegator x:Key="Nagate"/>
+            <c2:BoleanToVisibility x:Key="IsVisible" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
