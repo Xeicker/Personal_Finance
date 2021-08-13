@@ -36,6 +36,8 @@ namespace PersonalFinance
         {
             if(Dates!=null)
                 await Dates.Initialize();
+            if (!cmbDates.IsEnabled)
+                cmbDates.SelectedItem = null;
         }
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -54,7 +56,7 @@ namespace PersonalFinance
                 cmbDates.SelectedIndex = cmbDates.Items.Count - 1;
             }
             else if (chbUseTodayDate.IsChecked == true)
-                newDate = Dates.Last();
+                newDate = Dates.First(x => x.DateData == DateTime.Today);
             else
                 newDate = cmbDates.SelectedItem as Date;
             App.Current.Resources["SelectedDate"] = newDate;

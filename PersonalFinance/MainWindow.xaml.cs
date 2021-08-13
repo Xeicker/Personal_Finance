@@ -117,6 +117,7 @@ namespace PersonalFinance
             MainInvestment.InvAggregate = (cmbInvest.SelectedItem as CValue).AggID;
             MainInvestment.FromDate = dpkFromDate.SelectedDate;
             MainInvestment.EndDate = (chbxEndDate.IsChecked??false)? dpkToDate.SelectedDate:null;
+            var dtg = dtgInterests;
             MainInvestment.InvAmount = InvAmount;
             int r = await MainInvestment.InsertToDB();
             if (r > 0) {
@@ -124,8 +125,8 @@ namespace PersonalFinance
                 if (ins) {
                     Interests.Clear();
                     MessageBox.Show("Done", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                 }
+                }
+                return;
             }
             MessageBox.Show("Something went wrong", "Fail", MessageBoxButton.OK, MessageBoxImage.Error);
         }
@@ -134,6 +135,7 @@ namespace PersonalFinance
             if (Calculating)
                 return;
             Calculating = true;
+            
             var Dates = App.Current.Resources["Dates"] as DateCollection;
             var Revenues = App.Current.Resources["Revenues"] as RevenueCollection;
             var Rewards = App.Current.Resources["Rewards"] as CreditCardRewardCollection;

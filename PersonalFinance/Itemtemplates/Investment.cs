@@ -46,6 +46,8 @@ namespace PersonalFinance.Itemtemplates
   ORDER BY ID DESC", new Dictionary<string, object>());
                 ID = Aux["Id"] as int?;
             }
+            updateable = false;
+
             return r;
         }
     }

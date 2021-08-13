@@ -111,14 +111,14 @@
                                         <RowDefinition/>
                                         <RowDefinition Height="30"/>
                                     </Grid.RowDefinitions>
-                                    <DataGrid ItemsSource="{StaticResource Interests}" AutoGenerateColumns="False">
+                                    <DataGrid x:Name="dtgInterests" ItemsSource="{StaticResource Interests}" AutoGenerateColumns="False">
 
                                         <DataGrid.Columns>
 
                                             <DataGridTemplateColumn Header="Date" HeaderStyle="{StaticResource CenterDatagridHeaders}">
                                                 <DataGridTemplateColumn.CellTemplate >
                                                     <DataTemplate >
-                                                        <DatePicker SelectedDate="{Binding Path=Stop}" />
+                                                        <DatePicker SelectedDate="{Binding Path=Stop,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" Text="{Binding}"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn >

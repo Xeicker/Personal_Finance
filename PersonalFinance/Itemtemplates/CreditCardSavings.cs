@@ -18,6 +18,7 @@ namespace PersonalFinance.Itemtemplates
 
         public async Task Update()
         {
+            this.Clear();
             var CCMoves = App.Current.Resources["CCMoves"] as CreditCardMoveCollection;
             await CCMoves.Initialize();
             foreach(var item in Calculate(CCMoves

@@ -8,8 +8,8 @@ namespace PersonalFinance
     class Queries
     {
         public static Queries QueryManager => Q.Value;
-        private static Lazy<Queries> Q = new Lazy<Queries>(()=>new Queries());
-        private static Dictionary<string, string> QsbyString = new Dictionary<string, string>
+        private static readonly Lazy<Queries> Q = new Lazy<Queries>(()=>new Queries());
+        private static readonly Dictionary<string, string> QsbyString = new Dictionary<string, string>
         {
             {"Summary",
                 @"SELECT ToD AS Date
@@ -68,13 +68,23 @@ ON selIncomes.IncomeId = IncomeNames.ID"},
   WHERE [InvDate] > @fromd AND [InvDate] <=@tod"},
             {"InvsB",
                 @"SELECT  AggregateNames.AggregateName AS Name
-	   ,[InvDate] AS Date
+	   ,[EndDate] AS Date
       ,-[InvAmount] AS Amount
   FROM [dbo].[vInvComplete]
   JOIN AggregateNames
   ON AggregateNames.Id = vInvComplete.InvAggregate
   WHERE EndDate IS NOT NULL
-	AND [EndDate] > @fromd AND [EndDate] <=@tod"},
+	AND [EndDate] > @fromd AND [EndDate] <=@tod
+
+UNION ALL
+
+SELECT AggregateNames.AggregateName AS Name
+	   ,stop AS Date
+      ,-Amount
+FROM Interests
+JOIN AggregateNames
+  ON AggregateNames.Id = Interests.AggregateId
+WHERE  stop > @fromd AND stop <=@tod"},
             {"InvsCValue",
                 @"SELECT [AggregateName] AS Name
       ,[GivenDate] AS Date

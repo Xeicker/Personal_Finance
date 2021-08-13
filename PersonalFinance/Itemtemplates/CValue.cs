@@ -44,7 +44,7 @@ namespace PersonalFinance.Itemtemplates
 
         public override void FillSelectQuery(SqlCommand command)
         {
-            command.Parameters.AddWithValue("@date", SharedFunctions.AppDate.DateData ?? DateTime.Today);
+            command.Parameters.AddWithValue("@date", SharedFunctions.AppDate?.DateData ?? DateTime.Today);
         }
     }
 }
