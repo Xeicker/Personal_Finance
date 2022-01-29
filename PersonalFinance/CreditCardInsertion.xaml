@@ -11,6 +11,7 @@
             <RowDefinition Height="90"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -26,15 +27,16 @@
             <TextBlock Grid.Row="0" Grid.Column="1" Text="Date" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="0" Grid.Column="2" Text="Amount" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <ComboBox x:Name="cmbCreditCard" Grid.Row="1"
+                                              DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:CreditCardInsertion}}"
                                               ItemsSource="{StaticResource CreditCards}"
                                               DisplayMemberPath="Bank"
                                               SelectedValuePath="ID"
                                               SelectedValue="{Binding CardID}"
                                               DropDownOpened="cmbCreditCard_DropDownOpened"
                                         />
-            <DatePicker x:Name="dpkMainDate" Grid.Row="1" Grid.Column="1" SelectedDate="{Binding dateMove}"/>
-            <TextBox x:Name="tbxAmount"  Grid.Row="1" Grid.Column="2" Text="{Binding amountMove,StringFormat=C}" 
-                     HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
+            <DatePicker x:Name="dpkMainDate" Grid.Row="1" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:CreditCardInsertion}}" SelectedDate="{Binding dateMove}"/>
+            <TextBox x:Name="tbxAmount"  Grid.Row="1" Grid.Column="2" DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:CreditCardInsertion}}"
+                     Text="{Binding amountMove,StringFormat={}{0:$#\,#0.00;-$#\,#0.00}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
             <Button x:Name="btnInsert" Grid.Row="2" Grid.Column="2" Content="Insert item" Click="btnInsert_Click"/>
         </Grid>
         <Grid Grid.Row="1">
@@ -54,8 +56,8 @@
                                         ColumnHeaderStyle="{StaticResource ResourceKey=CenterDatagridHeaders}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Credit Card" Binding="{Binding CardName}"/>
-                    <DataGridTextColumn Header="Date" Binding="{Binding MoveDate,StringFormat=d}"/>
-                    <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" CellStyle="{StaticResource DataGridRightAligned}"/>
+                    <DataGridTextColumn Header="Date" Binding="{Binding MoveDate,StringFormat={}{0:dd/MM/yyyy}}"/>
+                    <DataGridTextColumn Header="Amount" Binding="{Binding Amount,StringFormat={}{0:$#\,#0.00;-$#\,#0.00}}" CellStyle="{StaticResource DataGridRightAligned}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

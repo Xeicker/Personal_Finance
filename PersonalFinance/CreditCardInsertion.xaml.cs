@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -20,27 +21,26 @@ namespace PersonalFinance
     /// </summary>
     public partial class CreditCardInsertion : UserControl
     {
-        public int CardID { get; set; }
-        public DateTime dateMove { get; set; }
-        public decimal amountMove { get; set; }
+        public int? CardID { get; set; }
+        public DateTime? dateMove { get; set; }
+        public decimal? amountMove { get; set; }
 
         private string Collection => TagReader.GetParameter(this.Tag.ToString(), "Collection");
         private string Type => TagReader.GetParameter(this.Tag.ToString(), "Type");
         public CreditCardInsertion()
         {
             InitializeComponent();
-            cmbCreditCard.DataContext = this;
-            dpkMainDate.DataContext = this;
-            tbxAmount.DataContext = this;
         }
-        private async void cmbCreditCard_DropDownOpened(object sender, EventArgs e)
+        public async Task Initialize()
         {
-            await (App.Current.Resources["CreditCards"] as CreditCardCollection).Initialize();
+            await (App.Current.Resources["CreditCards"] as CreditCardCollection).Initialize(); 
+            await (App.Current.Resources[Collection] as IItemCollection).Initialize();
+
         }
         private async void btnInsert_Click(object sender, RoutedEventArgs e)
         {
             var CCollection = App.Current.Resources[Collection] as IItemCollection;
-            if (CCollection.GetGenericCollection().Select(x=>x as CreditCardMove).Any(x=> x.MoveDate == this.dateMove && x.Amount == this.amountMove && x.CardID == this.CardID))
+            if (CCollection.GetGenericCollection().Select(x => x as CreditCardMove).Any(x => x.MoveDate == this.dateMove && x.Amount == this.amountMove && x.CardID == this.CardID))
                 return;
             switch (Type)
             {
@@ -61,7 +61,7 @@ namespace PersonalFinance
                     }.InsertToDB();
                     break;
             }
-            
+
             await CCollection.UpdateFromDB();
             dtg.ItemsSource = (App.Current.Resources[Collection] as IItemCollection).GetGenericCollection();
         }
@@ -70,13 +70,18 @@ namespace PersonalFinance
         {
             if (btnInitialize.Content.ToString() == "Initialize table")
             {
-                await (App.Current.Resources["CreditCards"] as CreditCardCollection).Initialize();
-                await (App.Current.Resources[Collection] as IItemCollection).Initialize();
+                await(App.Current.Resources["CreditCards"] as CreditCardCollection).Initialize();
+                await(App.Current.Resources[Collection] as IItemCollection).Initialize();
                 btnInitialize.Content = "Update table";
             }
             else
-                await (App.Current.Resources[Collection] as IItemCollection).UpdateFromDB();
+                await(App.Current.Resources[Collection] as IItemCollection).UpdateFromDB();
             dtg.ItemsSource = (App.Current.Resources[Collection] as IItemCollection).GetGenericCollection();
+        }
+
+        private async void cmbCreditCard_DropDownOpened(object sender, EventArgs e)
+        {
+            await(App.Current.Resources["CreditCards"] as CreditCardCollection).Initialize();
         }
     }
 }
