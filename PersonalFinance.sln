@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalFinance", "PersonalFinance\PersonalFinance.csproj", "{22BFECE1-61A8-435E-B03D-4DAA1B5CAFFE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalFinance", "PersonalFinance\PersonalFinance.csproj", "{286B7480-675B-4BED-B667-9AB4938A472E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{22BFECE1-61A8-435E-B03D-4DAA1B5CAFFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22BFECE1-61A8-435E-B03D-4DAA1B5CAFFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22BFECE1-61A8-435E-B03D-4DAA1B5CAFFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22BFECE1-61A8-435E-B03D-4DAA1B5CAFFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{286B7480-675B-4BED-B667-9AB4938A472E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{286B7480-675B-4BED-B667-9AB4938A472E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{286B7480-675B-4BED-B667-9AB4938A472E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{286B7480-675B-4BED-B667-9AB4938A472E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {477103B5-0A0E-486F-A025-6B97FC77B8CE}
+		SolutionGuid = {96ECC32B-3221-4B58-B949-29CA0EDF0F56}
 	EndGlobalSection
 EndGlobal
