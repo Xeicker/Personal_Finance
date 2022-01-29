@@ -4,10 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PersonalFinance"
+        xmlns:c="clr-namespace:PersonalFinance.Itemtemplates"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        x:Name="MWFinance">
-
+        x:Name="MWiondow">
+    <Window.Resources>
+        <c:CValue x:Key="SelectedInvestment"/>
+    </Window.Resources>
     <Grid>
         <TabControl>
             <TabItem Header="Main">
@@ -16,56 +19,36 @@
                         <ColumnDefinition Width="150"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <DataGrid x:Name="dtgMain" ItemsSource="{Binding}" Grid.Column="1" 
+                    <StackPanel>
+                        <Label Content="Summary" HorizontalContentAlignment="Center" MouseEnter="Label_MouseEnter"
+                               MouseLeave="Label_MouseLeave" Tag="query=Summary" MouseLeftButtonUp="Label_MouseLeftButtonUp"/>
+                        <Label Content="Show all" HorizontalContentAlignment="Center" MouseEnter="Label_MouseEnter"
+                               MouseLeave="Label_MouseLeave" Tag="query=All info" MouseLeftButtonUp="Label_MouseLeftButtonUp"/>
+                    </StackPanel>
+                    <DataGrid x:Name="dtgMain" DataContext="{Binding ElementName=MWiondow}" ItemsSource="{Binding  MainDataTable.DefaultView}" Grid.Column="1" 
                   AlternatingRowBackground="#FFEEFFFA" AlternationCount="2"
-                  AutoGeneratingColumn="dtgMain_AutoGeneratingColumn" FontSize="18" FontFamily="Calibri" FontStyle="Normal" 
-                  CellStyle="{StaticResource DataGridRightAligned}"
-                              />
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="61*"/>
-                            <ColumnDefinition Width="14*"/>
-                            <ColumnDefinition Width="75*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                        </Grid.RowDefinitions>
-                        <Label  Grid.Row="0" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave"
-                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" 
-                                MouseLeftButtonUp="Label_MouseLeftButtonUp" Tag="query=Summary" Grid.ColumnSpan="3">Summary</Label>
-                        <Label  Grid.Row="1"
-                  MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave"
-                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-                                MouseLeftButtonUp="Label_MouseLeftButtonUp" Tag="query=All info" Grid.ColumnSpan="3">Show all</Label>
-                    </Grid>
+                  AutoGeneratingColumn="dtgMain_AutoGeneratingColumn"  FontSize="18" FontFamily="Calibri" FontStyle="Normal" 
+                  CellStyle="{StaticResource DataGridRightAligned}"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Update" >
+            <TabItem Header="Update" Height="20" VerticalAlignment="Bottom">
                 <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" >
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <TabControl x:Name="tabCUpdate" Grid.Row="0" TabStripPlacement="Left" 
-                                Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+                    <TabControl x:Name="tabCUpdate" TabStripPlacement="Left" 
+                                Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                                SelectionChanged="tabCUpdate_SelectionChanged">
                         <TabItem x:Name="tabCValue" Header="Current Value" Style="{StaticResource tabSelector}">
-                            <local:UpdateDataWithSingleDate  Tag="headers=Location,Amount;ItemSource=CValues" />
+                            <local:UpdateDataWIthSingleDate x:Name="UsrCtrl_CValue" Tag="headers=Location,Amount;ItemSource=CValues"/>
                         </TabItem>
                         <TabItem x:Name="tabIncome" Header="Income" Style="{StaticResource tabSelector}">
-                            <local:UpdateDataWithSingleDate Tag="headers=Income,Amount;ItemSource=Incomes" />
+                            <local:UpdateDataWIthSingleDate Tag="headers=Income,Amount;ItemSource=Incomes" />
                         </TabItem>
                         <TabItem x:Name="tabInvest" Header="Investment" Style="{StaticResource tabSelector}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="60"/>
-                                    <RowDefinition Height="30"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Grid Grid.Row="0">
+                                <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
@@ -82,42 +65,44 @@
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Date" HorizontalAlignment="Center"/>
-                                        <CheckBox x:Name="chbxEndDate" Grid.Column="1" Content="End Date" IsChecked="False"/>
+                                        <CheckBox x:Name="chbxEndDate" Grid.Column="1" DataContext="{StaticResource SelectedInvestment}"
+                                                  Content="End Date" IsChecked="False"/>
                                     </Grid>
                                     <TextBlock Grid.Row="0" Grid.Column="2" Text="Amount" HorizontalAlignment="Center"/>
-                                    <ComboBox x:Name="cmbInvest" Grid.Row="1" Grid.Column="0" 
-                                              DataContext="{Binding ElementName=MWFinance}"
-                                              ItemsSource="{Binding CValues}"
+                                    <ComboBox x:Name="cmbInvest" Grid.Row="1" Grid.Column="0"
+                                              ItemsSource="{StaticResource CValues}"
                                               DisplayMemberPath="Name"
+                                              SelectedItem="{StaticResource SelectedInvestment}"
                                               DropDownOpened="cmbInvest_DropDownOpened"/>
                                     <Grid Grid.Row="1" Grid.Column="1">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="auto" />
                                             <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <DatePicker x:Name="dpkFromDate" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch"/>
+                                        <DatePicker x:Name="dpkFromDate" HorizontalAlignment="Stretch"/>
                                         <DatePicker x:Name="dpkToDate" Grid.Row="0" Grid.Column="1" Visibility="{Binding ElementName=chbxEndDate,Path=IsChecked,Converter={StaticResource IsVisible}}"/>
                                     </Grid>
                                     <TextBox x:Name="tbxInvAmount" Grid.Row="1" Grid.Column="2" Background="White" 
                                              TextAlignment="Right" VerticalContentAlignment="Center"
-                                             DataContext="{Binding ElementName=MWFinance}"
-                                             Text="{ Binding InvAmount,Mode=TwoWay, StringFormat={}{0:C}}"/>
+                                             DataContext="{Binding ElementName=MWiondow}"
+                                             Text="{ Binding InvAmount,Mode=TwoWay, StringFormat={}{0:$#\,#0.00;-$#\,#0.00}}"/>
                                 </Grid>
                                 <Grid Grid.Row="1">
-                                    <TextBlock Text="Interest" VerticalAlignment="Center"/>
-                                </Grid>
-                                <Grid Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="4*"/>
+                                        <ColumnDefinition Width="5*"/>
+                                    </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
                                         <RowDefinition/>
                                         <RowDefinition Height="30"/>
                                     </Grid.RowDefinitions>
-                                    <DataGrid x:Name="dtgInterests" ItemsSource="{StaticResource Interests}" AutoGenerateColumns="False">
-
+                                    <TextBlock Text="Interest" VerticalAlignment="Center"/>
+                                    <DataGrid x:Name="dtgInterests" Grid.Row="1" ItemsSource="{StaticResource Interests}" AutoGenerateColumns="False">
                                         <DataGrid.Columns>
-
                                             <DataGridTemplateColumn Header="Date" HeaderStyle="{StaticResource CenterDatagridHeaders}">
                                                 <DataGridTemplateColumn.CellTemplate >
-                                                    <DataTemplate >
+                                                    <DataTemplate>
                                                         <DatePicker SelectedDate="{Binding Path=Stop,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" Text="{Binding}"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
@@ -129,17 +114,32 @@
                                         </DataGrid.Columns>
 
                                     </DataGrid>
-                                    <Grid Grid.Row="1">
+                                    <TextBlock Grid.Column="1" Text="Previous investments" VerticalAlignment="Center"/>
+                                    <DataGrid  x:Name="dtg_Investmets" Grid.Row="1" Grid.Column="1" ItemsSource="{StaticResource Investments}" AutoGenerateColumns="False">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Name" HeaderStyle="{StaticResource CenterDatagridHeaders}"
+                                                                Binding="{Binding AggregateName}"/>
+                                            <DataGridTextColumn Header="From" HeaderStyle="{StaticResource CenterDatagridHeaders}"
+                                                                Binding="{Binding FromDate,StringFormat=dd/MM/yyyy}"/>
+                                            <DataGridTextColumn Header="To" HeaderStyle="{StaticResource CenterDatagridHeaders}"
+                                                                Binding="{Binding EndDate,StringFormat=dd/MM/yyyy}"/>
+                                            <DataGridTextColumn Header="Amount" HeaderStyle="{StaticResource CenterDatagridHeaders}"
+                                                                Binding="{Binding InvAmount,StringFormat={}{0:$#\,#.00;-$#\,#.00}}"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    <Button x:Name="btnUpdateInv" Grid.Row="2" Content="Update" Padding="30,0,30,0" Click="btnUpdateInv_Click"  HorizontalAlignment="Right"/>
+                                    <Grid Grid.Row="2" Grid.Column="1">
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70"/>
                                             <ColumnDefinition/>
-                                            <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Button x:Name="btnUpdateInv" Grid.Column="1" Content="Update" Padding="30,0,30,0" Click="btnUpdateInv_Click"/>
+                                        <TextBlock Text="Search" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBox Grid.Column="1" x:Name="tbx_Search" VerticalContentAlignment="Center"  TextChanged="tbx_Search_TextChanged"/>
                                     </Grid>
                                 </Grid>
                             </Grid>
                         </TabItem>
-                        <TabItem x:Name="tabCCardMoves" Header="Credit Card" Style="{StaticResource ResourceKey=tabSelector}">
+                        <TabItem x:Name="tabCardMoves" Header="Credit Card" Style="{StaticResource tabSelector}">
                             <local:CreditCardInsertion Tag="Collection=CCMoves;Type=Move"/>
                         </TabItem>
                         <TabItem x:Name="tabCCardReward" Header="Rewards" Style="{StaticResource tabSelector}">
@@ -149,6 +149,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Revenue">
+
                 <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
@@ -161,8 +162,9 @@
                         </Grid.ColumnDefinitions>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="198*"/>
-                                <ColumnDefinition/>
+                                <ColumnDefinition Width="59*"/>
+                                <ColumnDefinition Width="139*"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="199*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -171,16 +173,16 @@
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Text="From" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="16"/>
-                            <DatePicker x:Name="dpkFromRevDate" Grid.Row="1" DataContext="{Binding ElementName=MWFinance}" SelectedDate="{Binding RevenueFromDate}" Grid.ColumnSpan="2"/>
-                            <TextBlock Grid.Column="2" Text="To" VerticalAlignment="Center" Height="16"/>
-                            <DatePicker x:Name="dpkToRevDate" Grid.Row="1" Grid.Column="2"  DataContext="{Binding ElementName=MWFinance}" SelectedDate="{Binding RevenueToDate}" />
-                            <TextBlock Grid.Row="2" Text="Overall Revenue" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="16"/>
-                            <TextBlock x:Name="tblOvRev" Grid.Row="2" Grid.Column="2" 
-                                       DataContext="{StaticResource Revenues}" 
-                                       Text="{Binding OverallRevenue,Mode=TwoWay,StringFormat=P2}" Margin="18,0,0,0"/>
+                            <TextBlock Text="From" VerticalAlignment="Center" Grid.ColumnSpan="3" Height="16" Margin="0,0,1,0"/>
+                            <DatePicker x:Name="dpkFromRevDate" Grid.Row="1" DataContext="{Binding ElementName=MWiondow}" SelectedDate="{Binding RevenueFromDate}" Grid.ColumnSpan="3" Margin="0,0,1,0"/>
+                            <TextBlock Grid.Column="2" Text="To" VerticalAlignment="Center" Height="16" Grid.ColumnSpan="2"/>
+                            <DatePicker x:Name="dpkToRevDate" Grid.Row="1" Grid.Column="2"  DataContext="{Binding ElementName=MWiondow}" SelectedDate="{Binding RevenueToDate}" Grid.ColumnSpan="2" />
+                            <TextBlock Grid.Row="2" Text="Overall Revenue" VerticalAlignment="Center" Grid.ColumnSpan="3" Height="16" Margin="0,0,1,0"/>
+                            <TextBlock x:Name="tblOvRev" Grid.Row="2" Grid.Column="3" 
+                                       DataContext="{StaticResource Revenues}"
+                                       Text="{Binding OverallRevenue,Mode=OneWay,StringFormat=P2}" Margin="17,0,0,0"/>
                             <Button x:Name="btnCalculateRev" Grid.Column="2" Grid.Row="3" Content="Calculate"
-                                    Click="btnCalculateRev_Click" />
+                                    Click="btnCalculateRev_Click" Grid.ColumnSpan="2" />
                         </Grid>
                         <Grid Grid.Column="1">
                             <Grid.RowDefinitions>
