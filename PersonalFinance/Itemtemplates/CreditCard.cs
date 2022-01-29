@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PersonalFinance.Itemtemplates
 {
-    class CreditCard : IItem
+    public class CreditCard : IItem
     {
         public int ID { get; set; }
         public string Bank { get; set; }
@@ -16,7 +16,7 @@ namespace PersonalFinance.Itemtemplates
             Bank = dtr["Bank"].ToString();
         }
     }
-    class CreditCardCollection : ItemCollection<CreditCard>
+    public class CreditCardCollection : ItemCollection<CreditCard>
     {
         protected override string SelectQuerycmd => Queries.QueryManager["CreditCards"];
 

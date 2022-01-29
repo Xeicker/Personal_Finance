@@ -41,7 +41,7 @@ namespace PersonalFinance.Itemtemplates
             }
         }
     }
-    class CreditCardReward : CreditCardMove
+    public class CreditCardReward : CreditCardMove
     {
         protected override string InsertCmd => updateable ?
             Queries.QueryManager["Update_CCReward"] :
@@ -55,7 +55,7 @@ namespace PersonalFinance.Itemtemplates
             Amount = dtr["Amount"] as decimal?;
         }
     }
-    class CreditCardMoveCollection : ItemWInsertCollection<CreditCardMove>
+    public class CreditCardMoveCollection : ItemWInsertCollection<CreditCardMove>
     {
         protected override string SelectQuerycmd => Queries.QueryManager["CCMove"];
 
@@ -63,7 +63,7 @@ namespace PersonalFinance.Itemtemplates
         {
         }
     }
-    class CreditCardRewardCollection : ItemWInsertCollection<CreditCardReward>
+    public class CreditCardRewardCollection : ItemWInsertCollection<CreditCardReward>
     {
         protected override string SelectQuerycmd => Queries.QueryManager["Rewards"];
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PersonalFinance.Itemtemplates
 {
-    class Revenue:IItem
+    public class Revenue:IItem
     {
         public string Name { get; set; }
         public decimal Value { get; set; }
@@ -18,7 +18,7 @@ namespace PersonalFinance.Itemtemplates
         {
         }
     }
-    class RevAuxiliar : IItem
+    public class RevAuxiliar : IItem
     {
         public string Name { get; set; }
         public DateTime? InvDate { get; set; }
@@ -30,7 +30,7 @@ namespace PersonalFinance.Itemtemplates
             Amount = dtr["Amount"]as decimal?;
         }
     }
-    class RevAuxiliarCollection : ItemCollection<RevAuxiliar>
+    public class RevAuxiliarCollection : ItemCollection<RevAuxiliar>
     {
         private string selectedQuerycmd;
         public RevAuxiliarCollection(string queryName) : base(){
@@ -44,7 +44,7 @@ namespace PersonalFinance.Itemtemplates
             command.Parameters.AddWithValue("@tod", SharedFunctions.RevenueToDate);
         }
     }
-    class RevenueCollection : ObservableCollection<Revenue>
+    public class RevenueCollection : ObservableCollection<Revenue>
     {
         private decimal? overallRevenue;
         public decimal? OverallRevenue
