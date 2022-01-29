@@ -4,14 +4,22 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PersonalFinance.Itemtemplates
 {
+
     public interface IItem
     {
         void LoadFromDtItem(DataRow dtr);
+    }
+    public interface IItemCommon_CValue_Income : IItem
+    {
+        string Name { get; }
+        Decimal? Value { get; }
+
     }
     public abstract class OnlyInsertItem
     {
@@ -27,7 +35,7 @@ namespace PersonalFinance.Itemtemplates
                 {
                     using (SqlCommand command = new SqlCommand(InsertCmd, connection))
                     {
-                        int r=-1;
+                        int r = -1;
                         FillInsertCommand(command);
                         connection.Open();
                         if ((r = await Task.Run(() => command.ExecuteNonQuery())) >= 0)
@@ -57,10 +65,10 @@ namespace PersonalFinance.Itemtemplates
     {
         Task<bool> InsertToDB();
     }
-    public interface IItemWInsertCollection:IItemCollection,IOnlyInsertItemCollection
-    {}
-    public abstract class ItemCollection<T> : ObservableCollection<T>,IItemCollection  where T : IItem, new()
-    {   
+    public interface IItemWInsertCollection : IItemCollection, IOnlyInsertItemCollection
+    { }
+    public abstract class ItemCollection<T> : ObservableCollection<T>, IItemCollection where T : IItem, new()
+    {
         protected abstract string SelectQuerycmd { get; }
         public abstract void FillSelectQuery(SqlCommand command);
         public virtual async Task UpdateFromDB()
@@ -75,13 +83,13 @@ namespace PersonalFinance.Itemtemplates
 
         public IEnumerable<object> GetGenericCollection()
         {
-            foreach(var item in this)
+            foreach (var item in this)
             {
                 yield return item;
             }
         }
     }
-    public abstract class OnlyInsertItemCollection<T> : ObservableCollection<T>, IOnlyInsertItemCollection where T: OnlyInsertItem
+    public abstract class OnlyInsertItemCollection<T> : ObservableCollection<T>, IOnlyInsertItemCollection where T : OnlyInsertItem
     {
         public virtual async Task<bool> InsertToDB()
         {
@@ -98,9 +106,9 @@ namespace PersonalFinance.Itemtemplates
         public async Task<bool> InsertToDB()
         {
             bool success = true;
-            foreach (T item in this)
+            foreach (T item in this.ToList())
             {
-                success &= await item.InsertToDB()>=0;
+                success &= await item.InsertToDB() >= 0;
             }
             await this.UpdateFromDB();
             return success;
