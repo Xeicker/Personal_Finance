@@ -6,22 +6,23 @@ using System.Threading.Tasks;
 
 namespace PersonalFinance.Itemtemplates
 {
-    class Investment : OnlyInsertItem
+    class Investment : ItemWInsert
     {
         public int? ID { get; set; }
+        public string AggregateName { get; set; }
         public int? InvAggregate { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Decimal? InvAmount { get; set; }
-        protected override string InsertCmd => updateable?
+        protected override string InsertCmd => updateable ?
             Queries.QueryManager["Update_Invest"] :
             Queries.QueryManager["Insert_Invest"];
-        protected override bool insertable => InvAmount!=null && FromDate!=null && InvAggregate!=null;
+        protected override bool insertable => InvAmount != null && FromDate != null && InvAggregate != null;
         protected override void FillInsertCommand(SqlCommand command)
         {
             if (!updateable)
             {
-                command.Parameters.AddWithValue("@invAgg",InvAggregate);
+                command.Parameters.AddWithValue("@invAgg", InvAggregate);
                 command.Parameters.AddWithValue("@invD", FromDate);
                 command.Parameters.AddWithValue("@invAm", InvAmount);
                 if (EndDate == null)
@@ -38,7 +39,7 @@ namespace PersonalFinance.Itemtemplates
 
         public override async Task<int> InsertToDB()
         {
-            int r =  await base.InsertToDB();
+            int r = await base.InsertToDB();
             if (r > 0)
             {
                 var Aux = await SharedFunctions.getSingleRow(@"SELECT TOP (1) [Id]
@@ -49,6 +50,24 @@ namespace PersonalFinance.Itemtemplates
             updateable = false;
 
             return r;
+        }
+
+        public override void LoadFromDtItem(System.Data.DataRow dtr)
+        {
+            ID = dtr["Id"] as int?;
+            AggregateName = dtr["AggregateName"].ToString();
+            InvAggregate = dtr["InvAggregate"] as int?;
+            FromDate = dtr["InvDate"] as DateTime?;
+            EndDate = dtr["EndDate"] as DateTime?;
+            InvAmount = dtr["InvAmount"] as decimal?;
+        }
+    }
+    class InvestmentCollection : ItemWInsertCollection<Investment>
+    {
+        protected override string SelectQuerycmd => Queries.QueryManager["Investments"];
+
+        public override void FillSelectQuery(SqlCommand command)
+        {
         }
     }
 }

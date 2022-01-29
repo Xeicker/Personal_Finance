@@ -1,5 +1,4 @@
-﻿using PersonalFinance.Itemtemplates;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,22 +7,16 @@ namespace PersonalFinance
     class Queries
     {
         public static Queries QueryManager => Q.Value;
-        private static readonly Lazy<Queries> Q = new Lazy<Queries>(()=>new Queries());
+        private static readonly Lazy<Queries> Q = new Lazy<Queries>(() => new Queries());
         private static readonly Dictionary<string, string> QsbyString = new Dictionary<string, string>
         {
             {"Summary",
-                @"SELECT ToD AS Date
-    ,Income
-    ,InvestEarnings
-    ,Gastos
-    ,Total
-FROM dbo.vSummary" },
+                @"SELECT ToD AS Date,Income,InvestEarnings,Gastos,Total FROM dbo.vSummary" },
             {"All info",
                 @"SELECT  *
   FROM [dbo].[v_Aggregates_Legible]"},
             {"Aggregates",
-                @"
-WITH selAggs AS (
+                @"WITH selAggs AS (
 	SELECT Aggregates.Id,AggregateID,Aggregates.CurrValue
 	FROM Aggregates
 	JOIN Dates
@@ -36,9 +29,13 @@ SELECT selAggs.ID
 	,AggregateNames.AggregateName  AS Name
 	,selAggs.CurrValue AS Value
 	,AggregateNames.Invest
+    ,[Calculable]
+	,IncomeNames.AggregateID AS AutoInvest
   FROM [dbo].[AggregateNames]
 LEFT OUTER JOIN selAggs
-ON selAggs.AggregateID = AggregateNames.Id" },
+ON selAggs.AggregateID = AggregateNames.Id
+LEFT OUTER JOIN dbo.IncomeNames
+ON  AggregateNames.Id = IncomeNames.AggregateID " },
             {"Dates",
                 @"SELECT *
   FROM [dbo].Dates"},
@@ -184,7 +181,16 @@ VALUES (@cardId,@mDate,@amnt)"},
             {"Update_CCReward",
                 @"UPDATE [dbo].[Rewards]
 SET    [Amount] = @amnt
-WHERE Id = @id;"}
+WHERE Id = @id;"},
+            {"Investments",@"SELECT Inv.Id
+	  ,AggregateNames.AggregateName
+      ,[InvAggregate]
+      ,[InvDate]
+      ,[InvAmount]
+      ,[EndDate]
+  FROM [Koala].[dbo].[Inv]
+  JOIN AggregateNames
+  ON AggregateNames.Id = Inv.InvAggregate" }
     };
         private Queries() { }
         public string this[string key]
