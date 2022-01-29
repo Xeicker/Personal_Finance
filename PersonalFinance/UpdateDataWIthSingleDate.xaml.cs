@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,29 +20,48 @@ namespace PersonalFinance
     /// <summary>
     /// Lógica de interacción para UpdateDataWIthSingleDate.xaml
     /// </summary>
-    public partial class UpdateDataWithSingleDate : UserControl
+    public partial class UpdateDataWIthSingleDate : UserControl
     {
-        DateCollection Dates;
-        IItemWInsertCollection inputManager;
         public Date SelectedDate
         {
             get => SharedFunctions.AppDate;
             set => SharedFunctions.AppDate = value;
         }
-        public UpdateDataWithSingleDate()
+        DateCollection Dates;
+        IItemWInsertCollection inputManager;
+        public ObservableCollection<IItemCommon_CValue_Income> dataCollection { get; set; }
+        public UpdateDataWIthSingleDate()
         {
             InitializeComponent();
         }
-        private async void cmbDates_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if(Dates!=null)
-                await Dates.Initialize();
+            var headers = TagReader.GetParameter(this.Tag.ToString(), "headers").Split(',');
+            dtg.Columns[0].Header = headers[0];
+            dtg.Columns[1].Header = headers[1];
+            string its = TagReader.GetParameter(this.Tag.ToString(), "ItemSource");
+            dtg.ItemsSource = App.Current.Resources[its] as System.Collections.IEnumerable;
+            Dates = App.Current.Resources["Dates"] as DateCollection;
+            inputManager = dtg.ItemsSource as IItemWInsertCollection;
+            cmbDates.DataContext = this;
+        }
+
+        private void cmbDates_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            inputManager.UpdateFromDB();
+            UpdateFilter();
+        }
+
+        private void cmbDates_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
             if (!cmbDates.IsEnabled)
                 cmbDates.SelectedItem = null;
         }
+
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            Date newDate; 
+            Date newDate;
             int lastId = (int)Dates.Where(x => x.ID != null).Max(x => x.ID);
             if (chbUseTodayDate.IsChecked == true && !Dates.Any(x => x.DateData == DateTime.Today))
             {
@@ -60,35 +80,30 @@ namespace PersonalFinance
             else
                 newDate = cmbDates.SelectedItem as Date;
             App.Current.Resources["SelectedDate"] = newDate;
-            if(await inputManager.InsertToDB())
+            if (await inputManager.InsertToDB())
             {
                 MessageBox.Show("Done");
             }
-        }
-        private async void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if ((bool)e.NewValue)
-            {
-                
-                await Dates.Initialize();
-                await inputManager.Initialize();
-            }
-        }
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            var headers = TagReader.GetParameter(this.Tag.ToString(), "headers").Split(',');
-            dtg.Columns[0].Header = headers[0];
-            dtg.Columns[1].Header = headers[1];
-            string its = TagReader.GetParameter(this.Tag.ToString(), "ItemSource");
-            dtg.ItemsSource = App.Current.Resources[its] as System.Collections.IEnumerable;
-            Dates = App.Current.Resources["Dates"] as DateCollection;
-            inputManager = dtg.ItemsSource as IItemWInsertCollection;
-            cmbDates.DataContext = this;
+            UpdateFilter();
         }
 
-        private void cmbDates_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public async Task Initialize()
         {
-            inputManager.UpdateFromDB();
+            if (!cmbDates.IsEnabled)
+                cmbDates.SelectedItem = null;
+            await Dates.Initialize();
+            await inputManager.UpdateFromDB();
+            UpdateFilter();
+        }
+
+        private void UpdateFilter()
+        {
+            var view = CollectionViewSource.GetDefaultView(dtg.ItemsSource);
+            Predicate<object> predicate = x => true;
+            if (inputManager is CValueCollection)
+                predicate = x => !(x as CValue).Calculable;
+            view.Filter = predicate;
+            view.Refresh();
         }
     }
 }
